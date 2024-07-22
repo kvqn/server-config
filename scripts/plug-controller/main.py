@@ -47,11 +47,11 @@ async def main():
     client = tapo.ApiClient(TAPO_USERNAME, TAPO_PASSWORD)
     device = await client.p110(TAPO_PLUG_IP)
 
-    device_on = (await device.get_device_info_json())['device_on']
-
     while True:
+        logger.debug("Getting device info")
         battery = battery_percentage()
-        logger.debug(f"Battery percentage : {battery}%")
+        device_on = (await device.get_device_info_json())['device_on']
+        logger.debug(f"Battery percentage : {battery}%, Plug is f{"ON" if device_on else "OFF"}")
         if battery <= BATTERY_LOWER_LIMIT and not device_on:
             logger.info("Turning plug on")
             device.on()
