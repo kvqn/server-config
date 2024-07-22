@@ -1,2 +1,2 @@
-friday-logger==0.0.3
+friday-logger==0.0.4
 python-dotenv==1.0.1
