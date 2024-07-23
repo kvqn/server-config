@@ -36,10 +36,9 @@ logger = Logger(FRIDAY_ENDPOINT, FRIDAY_NAMESPACE, FRIDAY_TOPIC)
 
 def battery_percentage():
     resp = subprocess.run(["acpi"], capture_output=True)
-    match = re.search(r"(?<=Charging, )(\d+)(?=%)", resp.stdout.decode("utf-8"))
+    match = re.search(r"(\d+)(?=%)", resp.stdout.decode("utf-8"))
     if not match or not match.group(1):
-        print("aaaaa")
-        return
+        raise Exception("Unable to parse acpi output")
     return int(match.group(1))
 
 async def main():
