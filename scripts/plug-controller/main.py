@@ -50,7 +50,7 @@ async def main():
         logger.debug("Getting device info")
         battery = battery_percentage()
         device_on = (await device.get_device_info_json())['device_on']
-        logger.debug(f"Battery percentage : {battery}%, Plug is f{"ON" if device_on else "OFF"}")
+        logger.debug(f"Battery percentage : {battery}%, Plug is {"ON" if device_on else "OFF"}")
         if battery <= BATTERY_LOWER_LIMIT and not device_on:
             logger.info("Turning plug on")
             device.on()
