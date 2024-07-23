@@ -57,6 +57,6 @@ async def main():
         if battery >= BATTERY_UPPER_LIMIT and device_on:
             logger.info("Turning plug off")
             device.off()
-        await asyncio.sleep(SLEEP_TIMEOUT_SEC * 1000)
+        await asyncio.sleep(SLEEP_TIMEOUT_SEC)
 
 asyncio.run(main())
