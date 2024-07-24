@@ -53,10 +53,12 @@ async def main():
         logger.debug(f"Battery percentage : {battery}%, Plug is {"ON" if device_on else "OFF"}")
         if battery <= BATTERY_LOWER_LIMIT and not device_on:
             logger.info("Turning plug on")
-            device.on()
+            await device.on()
+            logger.info("Turned plug on")
         if battery >= BATTERY_UPPER_LIMIT and device_on:
             logger.info("Turning plug off")
-            device.off()
+            await device.off()
+            logger.info("Turned plug off")
         await asyncio.sleep(SLEEP_TIMEOUT_SEC)
 
 asyncio.run(main())
