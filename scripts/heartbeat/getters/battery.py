@@ -24,5 +24,5 @@ def get_battery() -> Optional[BatteryInfo]:
 
         return {"charging": charging, "percent": percent}
     except Exception as e:
-        logger.error("Unable to parse acpi output : ", e)
+        logger.error("Unable to parse acpi output")
         return

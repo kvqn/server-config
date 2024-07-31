@@ -1,4 +1,4 @@
-friday-logger==0.0.7
+friday-logger==0.0.8
 tapo==0.3.1
 python-dotenv==1.0.1
 selenium==4.23.1
