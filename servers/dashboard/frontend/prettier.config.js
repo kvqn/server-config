@@ -7,4 +7,5 @@ const config = {
   semi: false,
 }
 
+// eslint-disable-next-line no-undef
 module.exports = config

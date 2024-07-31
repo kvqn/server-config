@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@theme-toggles/react": "^4.1.0",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.40",
     "prettier": "^3.3.3",
