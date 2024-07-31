@@ -1,6 +1,4 @@
-// before and after
-
-// last 2 hour, 6 hours, 12 hour, 1 day, 2 day
+import { LoadingImage } from "@/components/loading-image"
 import {
   Select,
   SelectContent,
@@ -8,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useThemeContext } from "@/contexts/theme"
 import { env } from "@/env"
 import { useEffect, useState } from "react"
 import urlJoin from "url-join"
@@ -15,13 +14,23 @@ import urlJoin from "url-join"
 export function BatteryDashboard() {
   const [hours, setHours] = useState(2)
   const [image, setImage] = useState<string>()
+  const { theme } = useThemeContext()
 
   useEffect(() => {
-    setImage(urlJoin(env.VITE_BACKEND_URL, "battery", `?hours=${hours}`))
-  }, [hours])
+    const url = urlJoin(
+      env.VITE_BACKEND_URL,
+      "battery",
+      `?hours=${hours}`,
+      `?theme=${theme}`,
+    )
+    console.log(url)
+    setImage(url)
+  }, [hours, theme])
   return (
-    <div className="">
-      <div>
+    <div className="flex h-full flex-col items-center justify-center gap-4">
+      <h1 className="text-2xl font-bold">Battery percentage over time</h1>
+      <LoadingImage src={image} className="" />
+      <div className="py-8">
         <Select
           onValueChange={(value) => {
             setHours(parseInt(value))
@@ -38,9 +47,6 @@ export function BatteryDashboard() {
             <SelectItem value="48">2 Days</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-      <div>
-        <img src={image} />
       </div>
     </div>
   )

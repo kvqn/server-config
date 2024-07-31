@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Literal
 
 from fastapi import FastAPI
 from .battery import get_battery
@@ -22,5 +22,10 @@ class ImageResponse(Response):
 
 
 @app.get("/battery", response_class=ImageResponse)
-def battery(hours: int) -> ImageResponse:
-    return get_battery(hours)
+def battery(hours: int, theme: Literal["light", "dark"] = "light") -> ImageResponse:
+    return get_battery(hours, theme)
+
+
+@app.get("/ping")
+def ping():
+    return "pong"

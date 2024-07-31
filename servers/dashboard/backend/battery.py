@@ -6,9 +6,17 @@ from matplotlib.figure import Figure
 import matplotlib.dates as mdates
 import io
 from fastapi.responses import Response
+import matplotlib.style
+import matplotlib
+from typing import Literal, Union
 
 
-def get_battery(hours: int):
+def get_battery(hours: int, theme: Union[Literal["light"], Literal["dark"]]):
+    if theme == "dark":
+        matplotlib.style.use("dark_background")
+    else:
+        matplotlib.style.use("default")
+
     query = {
         "namespacesAndTopics": [{"namespace": "heartbeat", "topic": "laptop"}],
         "limit": 10000,
@@ -34,8 +42,10 @@ def get_battery(hours: int):
 
     fig = Figure()
     ax = fig.subplots()
-
     ax.plot(x, y)
+    for tick in ax.get_xticklabels():
+        tick.set_rotation(55)
+
     filelike = io.BytesIO()
     fig.savefig(filelike, format="png")
     filelike.seek(0)

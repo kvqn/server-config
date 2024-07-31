@@ -1,11 +1,12 @@
 import React from "react"
 import ReactDOM from "react-dom/client"
-import { Home } from "./routes/home.tsx"
+import { Home, Welcome } from "./routes/home.tsx"
 import "./index.css"
 import { ThemeProvider } from "./contexts/theme.tsx"
 import "unfonts.css"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { BatteryDashboard } from "./routes/battery.tsx"
+import { ErrorPage } from "./components/error-page.tsx"
 
 const router = createBrowserRouter([
   {
@@ -13,10 +14,15 @@ const router = createBrowserRouter([
     element: <Home />,
     children: [
       {
+        path: "",
+        element: <Welcome />,
+      },
+      {
         path: "battery",
         element: <BatteryDashboard />,
       },
     ],
+    errorElement: <ErrorPage />,
   },
 ])
 
