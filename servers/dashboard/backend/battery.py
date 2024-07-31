@@ -9,6 +9,9 @@ from fastapi.responses import Response
 import matplotlib.style
 import matplotlib
 from typing import Literal, Union
+from friday import Aggregator
+
+aggregator = Aggregator(args.friday_endpoint)
 
 
 def get_battery(hours: int, theme: Union[Literal["light"], Literal["dark"]]):
@@ -17,21 +20,15 @@ def get_battery(hours: int, theme: Union[Literal["light"], Literal["dark"]]):
     else:
         matplotlib.style.use("default")
 
-    query = {
-        "namespacesAndTopics": [{"namespace": "heartbeat", "topic": "laptop"}],
-        "limit": 10000,
-        "level": "INFO",
-        "after": (datetime.now() - timedelta(hours=hours)).strftime(
-            "%Y-%m-%dT%H:%M:%S.%fZ"
-        ),
-    }
-    resp = requests.get(
-        f"{args.friday_endpoint}/getLogs", params={"input": json.dumps(query)}
+    data = aggregator.query(
+        namespace_and_topics=[{"namespace": "heartbeat", "topic": "laptop"}],
+        limit=10000,
+        level="INFO",
+        after=datetime.now() - timedelta(hours=hours),
     )
-    data = resp.json()["result"]["data"]
     parsed_data = [
         {
-            "timestamp": datetime.strptime(i["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"),
+            **i,
             "data": json.loads(i["data"]),
         }
         for i in data

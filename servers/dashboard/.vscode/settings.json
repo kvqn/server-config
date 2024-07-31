@@ -1,3 +1,4 @@
 {
-    "prettier.configPath": "frontend/prettier.config.js"
+    "prettier.configPath": "frontend/prettier.config.js",
+    "python.analysis.typeCheckingMode": "basic"
 }
