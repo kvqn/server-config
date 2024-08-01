@@ -1,20 +1,14 @@
-import requests
-from .args import args
 import json
 from datetime import datetime, timedelta
 from matplotlib.figure import Figure
-import matplotlib.dates as mdates
 import io
 from fastapi.responses import Response
 import matplotlib.style
 import matplotlib
-from typing import Literal, Union
-from friday import Aggregator
-
-aggregator = Aggregator(args.friday_endpoint)
+from . import aggregator, Theme
 
 
-def get_battery(hours: int, theme: Union[Literal["light"], Literal["dark"]]):
+def get_battery(hours: int, theme: Theme):
     if theme == "dark":
         matplotlib.style.use("dark_background")
     else:

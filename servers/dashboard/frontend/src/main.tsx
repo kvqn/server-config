@@ -7,6 +7,7 @@ import "unfonts.css"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { BatteryDashboard } from "./routes/battery.tsx"
 import { ErrorPage } from "./components/error-page.tsx"
+import { CpuDashboard } from "./routes/cpu.tsx"
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "battery",
         element: <BatteryDashboard />,
+      },
+      {
+        path: "cpu",
+        element: <CpuDashboard />,
       },
     ],
     errorElement: <ErrorPage />,
