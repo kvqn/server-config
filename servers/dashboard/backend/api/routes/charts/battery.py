@@ -5,10 +5,11 @@ import io
 from fastapi.responses import Response
 import matplotlib.style
 import matplotlib
-from . import aggregator, Theme
+from api.utils import aggregator, Theme, chart_wrapper
 
 
-def get_battery(hours: int, theme: Theme):
+@chart_wrapper
+def get_battery():
     if theme == "dark":
         matplotlib.style.use("dark_background")
     else:

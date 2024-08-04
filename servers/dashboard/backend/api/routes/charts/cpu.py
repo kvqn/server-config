@@ -1,6 +1,6 @@
 import matplotlib.style
 from matplotlib.figure import Figure
-from . import Theme, get_heartbeats
+from ... import Theme, get_heartbeats
 import io
 from fastapi.responses import Response
 
