@@ -3,32 +3,13 @@ from datetime import datetime, timedelta
 from heartbeat.logger import logger
 from typing import Optional
 import json
+from heartbeat.daemons.cpu import latest_cpu_data
+
 
 logger = logger.getChild("cpu")
 
 
 def get_cpu() -> Optional[CpuInfo]:
-    try:
-        with open("heartbeat/cpu-usage-daemon/cpu-usage.json", "r") as file:
-            data = json.load(file)
-
-        timestamp = datetime.strptime(
-            f"{data['date']} {data['timestamp']}", r"%Y-%m-%d %H:%M:%S"
-        )
-        if datetime.now() > timestamp + timedelta(seconds=10):
-            raise Exception("cpu-usage.json is expired.")
-
-        usage = {}
-        total_usage = None
-        for cpu in data["cpu-load"]:
-            if cpu["cpu"] == "all":
-                total_usage = round(100 - float(cpu["idle"]), 2)
-            else:
-                usage[int(cpu["cpu"])] = round(100 - float(cpu["idle"]), 2)
-
-        assert isinstance(total_usage, float)
-
-        return {"total_usage": total_usage, "usage": usage}
-    except Exception as e:
-        logger.error("Error while getting cpu info")
-        return
+    if latest_cpu_data is None:
+        logger.error("No CPU data found")
+    return latest_cpu_data
