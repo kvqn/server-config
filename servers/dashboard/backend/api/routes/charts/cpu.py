@@ -1,40 +1,29 @@
-import matplotlib.style
-from matplotlib.figure import Figure
-from ... import Theme, get_heartbeats
-import io
-from fastapi.responses import Response
+from api.types import Theme
+from api.utils import get_heartbeats
+from api.routes.charts import FigureResponse, get_figure, router
 
 
-def get_cpu(cpus: list[str], hours: int, theme: Theme):
-    if theme == "dark":
-        matplotlib.style.use("dark_background")
-    else:
-        matplotlib.style.use("default")
-
+@router.get("/cpu")
+def chart_cpu(cpus: str, hours: int, theme: Theme) -> FigureResponse:
     heartbeats = get_heartbeats(hours)
-
-    fig = Figure()
+    fig = get_figure(theme)
     ax = fig.subplots()
 
-    for cpu in cpus:
+    for cpu in cpus.split(","):
         x = []
         y = []
         for heartbeat in heartbeats:
-            if heartbeat["data"]["cpu"] is None:
+            cpu_info = heartbeat["data"]["cpu"]
+            if cpu_info is None:
                 continue
             x.append(heartbeat["timestamp"])
             if cpu == "all":
-                y.append(heartbeat["data"]["cpu"]["total_usage"])
+                y.append(cpu_info["total_usage"])
             else:
-                y.append(heartbeat["data"]["cpu"]["usage"][cpu])
+                y.append(cpu_info["usage"][int(cpu)])
 
         ax.plot(x, y, label=cpu)
 
     ax.set_ylim(bottom=0, top=100)
 
-    filelike = io.BytesIO()
-    fig.savefig(filelike, format="png")
-    filelike.seek(0)
-
-    bytes = filelike.read()
-    return Response(content=bytes, media_type="image/png")
+    return FigureResponse(fig)

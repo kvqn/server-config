@@ -1,10 +1,11 @@
-from .args import args
+from common.args import get_args
 from friday import Aggregator
 from typing import Union, Literal
 from datetime import datetime, timedelta
 import json
 
-aggregator = Aggregator(args.friday_endpoint)
+args = get_args()
+aggregator = Aggregator(args.friday.endpoint)
 
 Theme = Union[Literal["light"], Literal["dark"]]
 

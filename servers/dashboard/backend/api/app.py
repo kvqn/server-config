@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import router
-
 
 origins = ["*"]
 
@@ -20,14 +18,6 @@ def ping():
     return "pong"
 
 
+from api.routes import router
+
 app.include_router(router)
-
-
-# @app.get("/battery", response_class=ImageResponse)
-# def battery(hours: int, theme: Literal["light", "dark"] = "light") -> ImageResponse:
-#     return get_battery(hours, theme)
-
-
-# @app.get("/cpu")
-# def cpu(hours: int, cpus: str):
-#     return get_cpu(hours=hours, cpus=cpus.split(","), theme="light")
