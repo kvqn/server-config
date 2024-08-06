@@ -1,7 +1,14 @@
+import { Timeframe } from "@/components/timeframe"
+
 export default function Page() {
   return <div>battery dashboard</div>
 }
 
 export function BatteryOptions() {
-  return <div>some battery options</div>
+  const [timeframe, TimeframePicker] = Timeframe()
+  return (
+    <div className="flex w-full flex-col">
+      <TimeframePicker />
+    </div>
+  )
 }
