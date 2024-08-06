@@ -3,6 +3,7 @@ import "@/styles/globals.css"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { type Metadata } from "next"
+import { ThemeProvider } from "next-themes"
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -17,8 +18,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${GeistSans.variable} ${GeistMono.variable} font-geist-sans`}
+      suppressHydrationWarning
     >
-      <body>{children}</body>
+      <body>
+        <ThemeProvider attribute="class">{children}</ThemeProvider>
+      </body>
     </html>
   )
 }
