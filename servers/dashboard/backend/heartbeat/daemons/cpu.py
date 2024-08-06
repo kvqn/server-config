@@ -11,15 +11,23 @@ latest_cpu_data: Optional[CpuInfo] = None
 
 
 async def cpu_daemon():
+    logger.debug("Starting cpu daemon")
 
     global latest_cpu_data
 
     command = r"S_TIME_FORMAT=ISO mpstat -P ALL 5 1 -o JSON | jq '{date: .sysstat.hosts.[0].date} + .sysstat.hosts.[0].statistics.[0]'"
     while True:
         logger.debug("Getting CPU data")
-        output = subprocess.run(
-            ["bash", "-c", command], capture_output=True
-        ).stdout.decode()
+        proc = await asyncio.create_subprocess_shell(
+            command,
+            stdout=asyncio.subprocess.PIPE,
+        )
+        if not proc.stdout:
+            logger.error("Failed to get CPU data")
+            raise Exception("Failed to get CPU data")
+
+        output = await proc.stdout.read()
+        output.decode()
         data = json.loads(output)
 
         total_usage = None
@@ -28,9 +36,9 @@ async def cpu_daemon():
         for cpu in data["cpu-load"]:
             cpu_id = cpu["cpu"]
             if cpu_id == "all":
-                total_usage = 100 - cpu["idle"]
+                total_usage = round(100 - cpu["idle"], 2)
             else:
-                usage[cpu_id] = 100 - cpu["idle"]
+                usage[cpu_id] = round(100 - cpu["idle"], 2)
 
         if total_usage is None:
             logger.error("Total CPU usage not found")
@@ -43,4 +51,6 @@ async def cpu_daemon():
 
         logger.debug("Got CPU data")
 
-        await asyncio.sleep(0)
+
+def get_latest_cpu_data() -> Optional[CpuInfo]:
+    return latest_cpu_data

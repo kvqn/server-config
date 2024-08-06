@@ -32,6 +32,7 @@ TIMEOUT_SEC = 10
 
 
 async def main_daemon():
+    logger.debug("Starting main daemon")
     while True:
         main()
         await asyncio.sleep(TIMEOUT_SEC)
