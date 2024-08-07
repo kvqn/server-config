@@ -1,15 +1,15 @@
 from api.types import Theme
-from api.utils import get_heartbeats_by_hours
+from api.utils import get_heartbeats_by_hours, get_heartbeats_by_range
 from api.routes.charts import ChartResponse, get_figure, router
+from common.types import HeartbeatInfo
+from matplotlib.figure import Figure
+from datetime import datetime
 
 
-@router.get("/cpu")
-def chart_cpu(cpus: str, hours: int, theme: Theme) -> ChartResponse:
-    heartbeats = get_heartbeats_by_hours(hours)
-    fig = get_figure(theme)
+def chart_cpu(heartbeats: list[HeartbeatInfo], fig: Figure, cpus: list[str]):
     ax = fig.subplots()
 
-    for cpu in cpus.split(","):
+    for cpu in cpus:
         x = []
         y = []
         for heartbeat in heartbeats:
@@ -26,4 +26,20 @@ def chart_cpu(cpus: str, hours: int, theme: Theme) -> ChartResponse:
 
     ax.set_ylim(bottom=0, top=100)
 
-    return ChartResponse(len(heartbeats), fig)
+
+@router.get("/cpu/by-hours")
+def cpu_by_hours(cpus: str, hours: int, theme: Theme = "light") -> ChartResponse:
+    heartbeats = get_heartbeats_by_hours(hours)
+    fig = get_figure(theme)
+    chart_cpu(heartbeats, fig, cpus.split(","))
+    return ChartResponse(heartbeats=len(heartbeats), fig=fig)
+
+
+@router.get("/cpu/by-range")
+def cpu_by_range(
+    cpus: str, before: datetime, after: datetime, theme: Theme = "light"
+) -> ChartResponse:
+    heartbeats = get_heartbeats_by_range(before, after)
+    fig = get_figure(theme)
+    chart_cpu(heartbeats, fig, cpus.split(","))
+    return ChartResponse(heartbeats=len(heartbeats), fig=fig)

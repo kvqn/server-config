@@ -23,8 +23,8 @@ export function TimeframeOptions({
   const [tab, setTab] = useState("simple")
 
   return (
-    <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-neutral-200 py-4">
-      <h2>Timeframe</h2>
+    <div className="flex flex-col items-center gap-2 rounded-xl border-2 p-4">
+      <h3 className="font-semibold">Timeframe</h3>
       <Tabs
         value={tab}
         onValueChange={(newTab) => {

@@ -4,7 +4,7 @@ import {
   BatteryOptions,
   BatteryOptionsProvider,
 } from "@/app/(dashboards)/battery/page"
-import { CpuOptions } from "@/app/(dashboards)/cpu/page"
+import { CpuOptions, CpuOptionsProvider } from "@/app/(dashboards)/cpu/page"
 import { usePathname } from "@/hooks/pathname"
 
 export function DashboardOptions() {
@@ -20,6 +20,9 @@ export function OptionsProvider({ children }: { children: React.ReactNode }) {
 
   if (pathname == "/battery")
     return <BatteryOptionsProvider>{children}</BatteryOptionsProvider>
+
+  if (pathname == "/cpu")
+    return <CpuOptionsProvider>{children}</CpuOptionsProvider>
 
   return <>{children}</>
 }

@@ -42,6 +42,44 @@ const api = {
           return resp.data
         },
       },
+      cpu: {
+        byHours: async function (
+          cpus: string[],
+          hours: number,
+          theme: string,
+        ): Promise<ChartResponse> {
+          const resp: AxiosResponse<ChartResponse> = await axios.get(
+            "/api/charts/cpu/by-hours",
+            {
+              params: {
+                cpus: cpus.join(","),
+                hours: hours,
+                theme: theme,
+              },
+            },
+          )
+          return resp.data
+        },
+        byRange: async function (
+          cpus: string[],
+          before: Date,
+          after: Date,
+          theme: string,
+        ): Promise<ChartResponse> {
+          const resp: AxiosResponse<ChartResponse> = await axios.get(
+            "/api/charts/cpu/by-range",
+            {
+              params: {
+                cpus: cpus.join(","),
+                before: before.toISOString(),
+                after: after.toISOString(),
+                theme: theme,
+              },
+            },
+          )
+          return resp.data
+        },
+      },
     },
   },
 }

@@ -74,7 +74,7 @@ function useBatteryOptions() {
   const context = useContext(BatteryOptionsContext)
   if (!context) {
     throw new Error(
-      "useBatteryOptionsContext must be used within a BatteryOptionsProvider",
+      "useBatteryOptions must be used within a BatteryOptionsProvider",
     )
   }
   return context
