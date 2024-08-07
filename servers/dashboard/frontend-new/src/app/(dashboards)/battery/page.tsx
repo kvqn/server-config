@@ -6,12 +6,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react"
 import cloneDeep from "lodash.clonedeep"
 import { useTheme } from "@/hooks/theme"
 import { SuspenseImage } from "@/components/suspense-image"
-import axios, { type AxiosResponse } from "axios"
-
-type BatteryChartResponse = {
-  heartbeats: number
-  fig: string
-}
+import api from "@/lib/bindings"
 
 export default function Page() {
   const { options } = useBatteryOptions()
@@ -24,24 +19,19 @@ export default function Page() {
   useEffect(() => {
     void (async () => {
       setImageSrc(undefined)
-      const resp: AxiosResponse<BatteryChartResponse> =
-        options.timeframe.type == "simple"
-          ? await axios.get("/api/charts/battery/by-hours", {
-              params: {
-                hours: options.timeframe.hours,
-                theme: theme,
-              },
-            })
-          : await axios.get("/api/charts/battery/by-range", {
-              params: {
-                before: options.timeframe.before.toISOString(),
-                after: options.timeframe.after.toISOString(),
-                theme: theme,
-              },
-            })
+      setHeartbeats(undefined)
 
-      setImageSrc("data:image/png;base64, " + resp.data.fig)
-      setHeartbeats(resp.data.heartbeats)
+      const resp =
+        options.timeframe.type == "simple"
+          ? await api.get.chart.battery.byHours(options.timeframe.hours, theme)
+          : await api.get.chart.battery.byRange(
+              options.timeframe.before,
+              options.timeframe.after,
+              theme,
+            )
+
+      setImageSrc("data:image/png;base64, " + resp.fig)
+      setHeartbeats(resp.heartbeats)
     })()
   }, [options, theme])
 
