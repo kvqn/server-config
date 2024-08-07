@@ -8,38 +8,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useRef, useState } from "react"
+import { type MutableRefObject, useState } from "react"
 import { DatePicker } from "./date-picker"
 
-export function Timeframe() {
-  const timeframe = useRef<
-    | { type: "simple"; hours: number }
-    | { type: "precise"; after: Date; before: Date }
-  >({ type: "simple", hours: 2 })
+export type TimeframeType =
+  | { type: "simple"; hours: number }
+  | { type: "precise"; after: Date; before: Date }
 
-  const [beforeDate, setBeforeDate] = useState(() => {
-    const date = new Date()
-    date.setHours(0)
-    date.setMinutes(0)
-    return date
-  })
-
-  const [afterDate, setAfterDate] = useState(() => {
-    const date = new Date()
-    date.setDate(date.getDate() - 1)
-    date.setHours(0)
-    date.setMinutes(0)
-    return date
-  })
-
+export function TimeframeOptions({
+  options,
+}: {
+  options: MutableRefObject<{ timeframe: TimeframeType }>
+}) {
   const [tab, setTab] = useState("simple")
 
-  const component = () => (
+  return (
     <div className="flex flex-col items-center gap-2 rounded-xl border-2 border-neutral-200 py-4">
       <h2>Timeframe</h2>
       <Tabs
         value={tab}
-        onValueChange={setTab}
+        onValueChange={(newTab) => {
+          if (newTab == "simple")
+            options.current.timeframe = { type: "simple", hours: 2 }
+          if (newTab == "precise") {
+            const afterDate = new Date()
+            afterDate.setHours(0, 0, 0, 0)
+            afterDate.setDate(afterDate.getDate() - 1)
+
+            const beforeDate = new Date()
+            beforeDate.setHours(0, 0, 0, 0)
+            options.current.timeframe = {
+              type: "precise",
+              after: afterDate,
+              before: beforeDate,
+            }
+          }
+          setTab(newTab)
+        }}
         className="flex flex-col items-center"
       >
         <TabsList>
@@ -49,7 +54,10 @@ export function Timeframe() {
         <TabsContent value="simple" className="w-full">
           <Select
             onValueChange={(value) => {
-              timeframe.current = { type: "simple", hours: parseInt(value) }
+              options.current.timeframe = {
+                type: "simple",
+                hours: parseInt(value),
+              }
             }}
           >
             <SelectTrigger defaultValue="2" className="w-full">
@@ -70,11 +78,8 @@ export function Timeframe() {
               <label className="w-16">After</label>
               <DatePicker
                 onDateChange={(date) => {
-                  timeframe.current = {
-                    type: "precise",
-                    after: date,
-                    before: beforeDate,
-                  }
+                  if (options.current.timeframe.type == "precise")
+                    options.current.timeframe.after = date
                 }}
               />
             </div>
@@ -82,11 +87,8 @@ export function Timeframe() {
               <label className="w-16">Before</label>
               <DatePicker
                 onDateChange={(date) => {
-                  timeframe.current = {
-                    type: "precise",
-                    after: afterDate,
-                    before: date,
-                  }
+                  if (options.current.timeframe.type == "precise")
+                    options.current.timeframe.before = date
                 }}
               />
             </div>
@@ -95,6 +97,4 @@ export function Timeframe() {
       </Tabs>
     </div>
   )
-
-  return [timeframe, component] as const
 }

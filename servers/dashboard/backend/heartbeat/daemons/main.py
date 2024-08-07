@@ -28,7 +28,7 @@ def main():
         logger.error("Error while generating hearbeat")
 
 
-TIMEOUT_SEC = 10
+TIMEOUT_SEC = 5
 
 
 async def main_daemon():
