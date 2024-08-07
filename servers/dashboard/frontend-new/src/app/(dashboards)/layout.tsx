@@ -36,7 +36,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex h-12 items-center px-4">
             <DashboardHeading />
           </div>
-          <div className="p-2">{children}</div>
+          <div className="h-full p-2">{children}</div>
         </ResizablePanel>
       </ResizablePanelGroup>
     </OptionsProvider>

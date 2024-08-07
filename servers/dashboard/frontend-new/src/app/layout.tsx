@@ -21,7 +21,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider attribute="class">{children}</ThemeProvider>
+        <ThemeProvider attribute="class" themes={["light", "dark"]}>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )
