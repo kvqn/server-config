@@ -1,4 +1,4 @@
-from api.routes.charts import router, FigureResponse, get_figure
+from api.routes.charts import router, ChartResponse, get_figure
 from api.types import Theme
 from api.utils import get_heartbeats_by_hours, get_heartbeats_by_range
 from matplotlib.figure import Figure
@@ -22,18 +22,18 @@ def chart_battery(heartbeats: list[HeartbeatInfo], fig: Figure):
 
 
 @router.get("/battery/by-hours")
-def battery_by_hours(hours: int, theme: Theme = "light") -> FigureResponse:
+def battery_by_hours(hours: int, theme: Theme = "light") -> ChartResponse:
     heartbeats = get_heartbeats_by_hours(hours)
     fig = get_figure(theme)
     chart_battery(heartbeats, fig)
-    return FigureResponse(fig)
+    return ChartResponse(len(heartbeats), fig)
 
 
 @router.get("/battery/by-range")
 def battery_by_range(
     before: datetime, after: datetime, theme: Theme = "light"
-) -> FigureResponse:
+) -> ChartResponse:
     heartbeats = get_heartbeats_by_range(before, after)
     fig = get_figure(theme)
     chart_battery(heartbeats, fig)
-    return FigureResponse(fig)
+    return ChartResponse(len(heartbeats), fig)

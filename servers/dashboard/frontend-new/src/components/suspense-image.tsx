@@ -5,7 +5,7 @@
 import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
 
-export function SuspenseImage({ src }: { src: string }) {
+export function SuspenseImage({ src }: { src?: string }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

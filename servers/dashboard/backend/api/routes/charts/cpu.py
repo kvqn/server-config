@@ -1,10 +1,10 @@
 from api.types import Theme
 from api.utils import get_heartbeats_by_hours
-from api.routes.charts import FigureResponse, get_figure, router
+from api.routes.charts import ChartResponse, get_figure, router
 
 
 @router.get("/cpu")
-def chart_cpu(cpus: str, hours: int, theme: Theme) -> FigureResponse:
+def chart_cpu(cpus: str, hours: int, theme: Theme) -> ChartResponse:
     heartbeats = get_heartbeats_by_hours(hours)
     fig = get_figure(theme)
     ax = fig.subplots()
@@ -26,4 +26,4 @@ def chart_cpu(cpus: str, hours: int, theme: Theme) -> FigureResponse:
 
     ax.set_ylim(bottom=0, top=100)
 
-    return FigureResponse(fig)
+    return ChartResponse(len(heartbeats), fig)

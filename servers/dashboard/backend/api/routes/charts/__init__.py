@@ -4,6 +4,8 @@ from fastapi.responses import Response
 from matplotlib.figure import Figure
 import io
 import matplotlib.style
+import base64
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -16,14 +18,17 @@ def get_figure(theme: Theme) -> Figure:
     return Figure()
 
 
-class FigureResponse(Response):
-    def __init__(self, fig: Figure):
+class ChartResponse(BaseModel):
+    heartbeats: int
+    fig: str
+
+    def __init__(self, heartbeats: int, fig: Figure):
         filelike = io.BytesIO()
         fig.savefig(filelike, format="png")
         filelike.seek(0)
-        fig_bytes = filelike.read()
-        super().__init__(content=fig_bytes, media_type="image/png")
+        fig_base64 = base64.b64encode(filelike.read()).decode()
+        super().__init__(heartbeats=heartbeats, fig=fig_base64)
 
 
-from api.routes.charts.battery import chart_battery
-from api.routes.charts.cpu import chart_cpu
+import api.routes.charts.battery
+import api.routes.charts.cpu

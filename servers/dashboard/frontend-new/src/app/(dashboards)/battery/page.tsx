@@ -2,37 +2,53 @@
 
 import { TimeframeOptions, type TimeframeType } from "@/components/timeframe"
 import { Button } from "@/components/ui/button"
-import { createContext, useContext, useRef, useState } from "react"
+import { createContext, useContext, useEffect, useRef, useState } from "react"
 import cloneDeep from "lodash.clonedeep"
-import urljoin from "url-join"
 import { useTheme } from "@/hooks/theme"
 import { SuspenseImage } from "@/components/suspense-image"
+import axios, { type AxiosResponse } from "axios"
+
+type BatteryChartResponse = {
+  heartbeats: number
+  fig: string
+}
 
 export default function Page() {
   const { options } = useBatteryOptions()
   const { theme } = useTheme()
   console.log("theme", theme)
 
+  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined)
+  const [heartbeats, setHeartbeats] = useState<number | undefined>(undefined)
+
+  useEffect(() => {
+    void (async () => {
+      setImageSrc(undefined)
+      const resp: AxiosResponse<BatteryChartResponse> =
+        options.timeframe.type == "simple"
+          ? await axios.get("/api/charts/battery/by-hours", {
+              params: {
+                hours: options.timeframe.hours,
+                theme: theme,
+              },
+            })
+          : await axios.get("/api/charts/battery/by-range", {
+              params: {
+                before: options.timeframe.before.toISOString(),
+                after: options.timeframe.after.toISOString(),
+                theme: theme,
+              },
+            })
+
+      setImageSrc("data:image/png;base64, " + resp.data.fig)
+      setHeartbeats(resp.data.heartbeats)
+    })()
+  }, [options, theme])
+
   return (
-    <div className="flex h-full flex-col items-center justify-center">
-      <SuspenseImage
-        src={
-          options.timeframe.type == "simple"
-            ? urljoin(
-                "/api/charts/battery",
-                "by-hours",
-                `?hours=${options.timeframe.hours}`,
-                `?theme=${theme}`,
-              )
-            : urljoin(
-                "/api/charts/battery",
-                "by-range",
-                `?before=${options.timeframe.before.toISOString()}`,
-                `?after=${options.timeframe.after.toISOString()}`,
-                `?theme=${theme}`,
-              )
-        }
-      />
+    <div className="flex h-full flex-col items-center justify-center gap-4">
+      <SuspenseImage src={imageSrc} />
+      {heartbeats && <p>{heartbeats} Heartbeats</p>}
     </div>
   )
 }
