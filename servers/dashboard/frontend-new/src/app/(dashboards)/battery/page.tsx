@@ -16,11 +16,22 @@ export default function Page() {
   return (
     <div className="flex h-full flex-col items-center justify-center">
       <SuspenseImage
-        src={urljoin(
-          "/api/charts/battery",
-          `?hours=${options.timeframe.type == "simple" ? options.timeframe.hours : 2}`,
-          `?theme=${theme}`,
-        )}
+        src={
+          options.timeframe.type == "simple"
+            ? urljoin(
+                "/api/charts/battery",
+                "by-hours",
+                `?hours=${options.timeframe.hours}`,
+                `?theme=${theme}`,
+              )
+            : urljoin(
+                "/api/charts/battery",
+                "by-range",
+                `?before=${options.timeframe.before.toISOString()}`,
+                `?after=${options.timeframe.after.toISOString()}`,
+                `?theme=${theme}`,
+              )
+        }
       />
     </div>
   )

@@ -5,7 +5,7 @@ from api.aggregator import aggregator
 from pydantic import TypeAdapter, ValidationError
 
 
-def get_heartbeats(hours: int) -> list[HeartbeatInfo]:
+def get_heartbeats_by_hours(hours: int) -> list[HeartbeatInfo]:
     data = aggregator.query(
         namespace_and_topics=[{"namespace": "heartbeat", "topic": "laptop"}],
         limit=100000,
@@ -13,10 +13,30 @@ def get_heartbeats(hours: int) -> list[HeartbeatInfo]:
         after=datetime.now() - timedelta(hours=hours),
     )
 
-    heartbeat_adapter = TypeAdapter(Heartbeat)
-    heartbeat_info_adapter = TypeAdapter(HeartbeatInfo)
+    heartbeats = _prepare_heartbeat_data(data)
+    return heartbeats
 
+
+def get_heartbeats_by_range(before: datetime, after: datetime) -> list[HeartbeatInfo]:
+    data = aggregator.query(
+        namespace_and_topics=[{"namespace": "heartbeat", "topic": "laptop"}],
+        limit=100000,
+        level="INFO",
+        before=before,
+        after=after,
+    )
+
+    heartbeats = _prepare_heartbeat_data(data)
+    return heartbeats
+
+
+heartbeat_adapter = TypeAdapter(Heartbeat)
+heartbeat_info_adapter = TypeAdapter(HeartbeatInfo)
+
+
+def _prepare_heartbeat_data(data) -> list[HeartbeatInfo]:
     parsed_data = []
+
     for i in data:
         try:
             parsed = heartbeat_info_adapter.validate_python(

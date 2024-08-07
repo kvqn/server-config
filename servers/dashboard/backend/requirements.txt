@@ -1,7 +1,8 @@
 fastapi==0.111.1
 requests==2.32.3
 python-dotenv==1.0.1
-matplotlib==3.9.1
+matplotlib
 orjson==3.10.6
-friday-logger==0.0.11black==24.8.0
+friday-logger==0.0.11
+black==24.8.0
 ipykernel==6.29.5
